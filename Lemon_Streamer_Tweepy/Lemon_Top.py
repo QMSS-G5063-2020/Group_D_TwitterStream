@@ -40,4 +40,3 @@ myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
 
 myStream.filter(track=[the_regex])
 
-
