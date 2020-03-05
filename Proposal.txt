@@ -1,0 +1,4 @@
+I thought writing this proposal together through github would be a good way to get me more comfortable with branches and pull requests.
+
+For the sake of easy commits and access through the browser, I figured we should start with a txt file. 
+
