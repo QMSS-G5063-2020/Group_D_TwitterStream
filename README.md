@@ -19,3 +19,5 @@ https://medium.com/@kelly.obriant/basic-builds-how-to-update-data-in-a-shiny-app
 https://gist.github.com/ctufts/e38e0588bf6d8f32e99d
 
 https://github.com/kimasx/twtr-search-map
+
+https://gist.github.com/alexdeloy/fdb36ad251f70855d5d6
