@@ -15,5 +15,7 @@ https://rstudio.github.io/reticulate/
 
 ### Gabriel
 https://medium.com/@kelly.obriant/basic-builds-how-to-update-data-in-a-shiny-app-on-rstudio-connect-48593902b1e2 
+
 https://gist.github.com/ctufts/e38e0588bf6d8f32e99d
+
 https://github.com/kimasx/twtr-search-map
