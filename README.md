@@ -13,6 +13,13 @@ https://rstudio.github.io/reticulate/
 
 ### Ceci
 
+https://www.nltk.org/_modules/nltk/sentiment/vader.html
+
+https://pythonprogramming.net/sentiment-analysis-python-textblob-vader/
+
+https://www.tidytextmining.com/sentiment.html#comparing-the-three-sentiment-dictionaries
+
+
 ### Gabriel
 https://medium.com/@kelly.obriant/basic-builds-how-to-update-data-in-a-shiny-app-on-rstudio-connect-48593902b1e2 
 
