@@ -2,3 +2,18 @@ I thought writing this proposal together through github would be a good way to g
 
 For the sake of easy commits and access through the browser, I figured we should start with a txt file. 
 
+Title: Streaming sentiment analysis on twitter using user inputs
+
+Group: D
+
+Members: Lemon Reimer (rlr2178@columbia.edu), ...
+
+Abstract:
+
+Unit of analysis:
+
+Dataset:
+
+Visualizations:
+
+Concerns:
