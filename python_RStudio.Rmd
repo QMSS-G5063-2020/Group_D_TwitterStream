@@ -23,7 +23,7 @@ source_python("Lemon_ML.py", convert = T)
 ```
 
 ```{r API keys}
-#after the first call, this info is saved to environ
+#after the first call, this info is saved to renviron
 
 #ckey=""
 #csecret=""
@@ -40,27 +40,26 @@ source_python("Lemon_ML.py", convert = T)
 
 ```{r}
 query <- "COVID"
-streamtime <- 2
+streamtime <- 2 #number of seconds for each sampling from twitter
 filename <- "teststream.json"
 
-#for (tweet in stream_tweets(q = query, timeout = streamtime, file_name = filename)$text){
-    #print(tweet)
-#}
+timer <- 1 #initialize timer
+rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename) #initialize dataframe
+rt <- rt[rt$lang == "en",] #remove non-english text
 
-timer <- 1
-rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename)
-rt <- rt[rt$lang == "en",]
-repeat {
-  temp_rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename)
-  temp_rt <- temp_rt[temp_rt$lang == "en",]
-  rt <- rbind(rt, temp_rt)
-  timer <- timer + 1
-  #for (tweet in temp_rt$text){
+repeat { #start repeat statement
+  temp_rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename) #stream new data
+  temp_rt <- temp_rt[temp_rt$lang == "en",] 
+  rt <- rbind(rt, temp_rt) #add new data to dataframe
+  timer <- timer + 1 #add loop to timer
+  
+  #for (tweet in temp_rt$text){ #test, ignore
     #print(tweet)
   #}
-  #print(ggplot(rt, aes(x = source)) + geom_bar())
-  print(ts_plot(rt, by = 'secs', trim = 1))
-  if (timer == 5){
+  
+  #print(ggplot(rt, aes(x = source)) + geom_bar()) #example of bar plot, rescales as count increases!
+  print(ts_plot(rt, by = 'secs', trim = 1)) #example of line plot, rescales as count increases!
+  if (timer == 5){ #break statement, stream ends after 5 loops
     break
   }
 }
