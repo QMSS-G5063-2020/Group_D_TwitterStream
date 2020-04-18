@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
+library(rtweet)
+library(dplyr)
 use_python("C:/Users/swagj/AppData/Local/Continuum/anaconda3/python.exe")
 knitr::opts_knit$set(root.dir = normalizePath("C:\\Users\\swagj\\Documents\\NLPforSS\\Lemon_HW4"))
 ```
@@ -199,8 +201,7 @@ myStream.filter(track=[the_regex])
 ```
 
 ```{r}
-source_python("C:\\Users\\swagj\\Documents\\NLPforSS\\Lemon_HW4\\Lemon_HW4_API.py", convert = T)
-
+source_python("C:\\Users\\swagj\\Documents\\GitHub\\TwitterNetworkStreaming\\Lemon_Streamer_Tweepy\\Lemon_ML.py", convert = T)
 ```
 
 ```{r}
@@ -209,15 +210,49 @@ csecret="cUMxyTKUuiYw5tEGL0NjQ4utCoXmzTQG2H7leZxUqmYthgsrQK"
 atoken="955975812-MIu6rEdMBgTwCcxBz6mTDZrzsPk9W36nCxnOaFpH"
 asecret="Lra3hBdFBg8rMjd1vmjyrC00eBa90Tasqa9njx89plx08"
 
-auth = py$tweepy$auth$OAuthHandler(ckey, csecret)
-auth$set_access_token(atoken, asecret)
-api = py$tweepy$API(auth)
+token <- create_token(
+  app = "rstatsjournalismresearch",
+  consumer_key = ckey,
+  consumer_secret = csecret,
+  access_token = atoken,
+  access_secret = asecret)
 
-the_regex = "RIP"
+#auth = py$tweepy$auth$OAuthHandler(ckey, csecret)
+#auth$set_access_token(atoken, asecret)
+#api = py$tweepy$API(auth)
 
-myStreamListener = py$MyStreamListener()
-myStream = py$tweepy$Stream(auth = api$auth, listener = myStreamListener)
+#the_regex = "RIP"
 
-print(py_to_r(myStream$filter(track = list(py_unicode(the_regex)))))
+#myStreamListener = py$MyStreamListener()
+#myStream = py$tweepy$Stream(auth = api$auth, listener = myStreamListener)
+
+#print(py_to_r(myStream$filter(track = list(py_unicode(the_regex)))))
+```
+
+```{r}
+query <- "COVID"
+streamtime <- 2
+filename <- "teststream.json"
+
+#for (tweet in stream_tweets(q = query, timeout = streamtime, file_name = filename)$text){
+    #print(tweet)
+#}
+timer <- 1
+rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename)
+repeat {
+  temp_rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename)
+  rt <- rbind(rt, temp_rt)
+  timer <- timer + 1
+  for (tweet in temp_rt$text){
+    print(tweet)
+  }
+  if (timer == 5){
+    break
+  }
+}
+```
+
+```{r}
+ts_plot(rt, by = 'secs', trim = 1)
 ```
 
