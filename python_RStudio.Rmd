@@ -23,7 +23,6 @@ source_python("Lemon_ML.py", convert = T)
 ```
 
 ```{r API keys}
-
 #after the first call, this info is saved to environ
 
 #ckey=""
@@ -59,7 +58,8 @@ repeat {
   #for (tweet in temp_rt$text){
     #print(tweet)
   #}
-  print(ggplot(rt, aes(x = source)) + geom_bar())
+  #print(ggplot(rt, aes(x = source)) + geom_bar())
+  print(ts_plot(rt, by = 'secs', trim = 1))
   if (timer == 5){
     break
   }
@@ -67,7 +67,6 @@ repeat {
 ```
 
 ```{r}
-#ts_plot(rt, by = 'secs', trim = 1)
-ggplot(rt, aes(x = source)) + geom_bar()
+ts_plot(rt, by = 'secs', trim = 1)
 ```
 
