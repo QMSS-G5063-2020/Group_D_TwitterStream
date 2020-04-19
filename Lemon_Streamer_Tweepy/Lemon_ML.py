@@ -95,4 +95,3 @@ class MLClass(object):
         classified = clf_pca.predict(test_text_pca)[0]
         probability = max(list(clf_pca.predict_proba(test_text_pca)[0]))
         return(classified, probability)
-    
