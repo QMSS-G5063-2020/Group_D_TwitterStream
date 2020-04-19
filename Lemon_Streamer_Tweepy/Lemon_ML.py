@@ -88,5 +88,11 @@ class MLClass(object):
         pickle.dump(pca, open("pca.pkl", "wb"))
         pickle.dump(my_vec_tfidf, open("tfidf.pkl", "wb"))
         return(my_vec_tfidf, pca, clf_pca)
-    
+        
+    def NewPredict(self, my_vec_tfidf, pca, clf_pca, data):
+        test_text = my_vec_tfidf.transform([data]).toarray()
+        test_text_pca = pca.transform(test_text)
+        classified = clf_pca.predict(test_text_pca)[0]
+        probability = max(list(clf_pca.predict_proba(test_text_pca)[0]))
+        return(classified, probability)
     

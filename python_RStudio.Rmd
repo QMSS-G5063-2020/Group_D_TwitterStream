@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
 library(rtweet)
 library(ggplot2)
+library(dplyr)
 
 #points to where python is on your local
 use_python("C:/Users/swagj/AppData/Local/Continuum/anaconda3/python.exe")
@@ -19,7 +20,15 @@ knitr::opts_knit$set(root.dir = normalizePath("C:\\Users\\swagj\\Documents\\GitH
 ```
 
 ```{r initialize python object}
-source_python("Lemon_ML.py", convert = T)
+source_python("Lemon_ML_NoClass.py", convert = F)
+
+#import some python modules
+main <- import_main()
+builtins <- import_builtins()
+
+py$os$chdir("C:\\Users\\swagj\\Documents\\GitHub\\TwitterNetworkStreaming\\Lemon_Streamer_Tweepy")
+#import(Lemon_Streamer_Tweepy, convert = F)
+#myML <- reticulate::import_from_path(Lemon_Streamer_Tweepy, path = "C:\\Users\\swagj\\Documents\\GitHub\\TwitterNetworkStreaming\\")
 ```
 
 ```{r API keys}
@@ -39,6 +48,8 @@ source_python("Lemon_ML.py", convert = T)
 ```
 
 ```{r}
+#Lemon: I'm worried that adding ML to this is going to slow it down a lot
+
 query <- "COVID"
 streamtime <- 2 #number of seconds for each sampling from twitter
 filename <- "teststream.json"
@@ -58,14 +69,31 @@ repeat { #start repeat statement
   #}
   
   #print(ggplot(rt, aes(x = source)) + geom_bar()) #example of bar plot, rescales as count increases!
-  print(ts_plot(rt, by = 'secs', trim = 1)) #example of line plot, rescales as count increases!
+  #print(ts_plot(rt, by = 'secs', trim = 1)) #example of line plot, rescales as count increases!
+  
+  myts <- rt %>% group_by(source) %>% ts_plot(., by = "secs", trim = 1) + ggplot2::labs(title = "Tweets over time") 
+  print(myts) #more complex version of the line plot example
+  
   if (timer == 5){ #break statement, stream ends after 5 loops
     break
   }
 }
 ```
 
-```{r}
-ts_plot(rt, by = 'secs', trim = 1)
+```{r figuring out how to classify}
+#my_vec_tfidf = py$pickle$load(builtins$open(py$os$path$realpath("tfidf.pkl"), "rb"))
+#pca = py$pickle$load(builtins$open(py$os$path$realpath("pca.pkl"), "rb"))
+#clf_pca = py$pickle$load(builtins$open(py$os$path$realpath("clf_pca.pkl"), "rb"))
+
+my_vec_tfidf = py_load_object("tfidf.pkl")
+pca = py_load_object("pca.pkl")
+clf_pca = py_load_object("clf_pca.pkl")
+
+test = py$clean_up_sw(rt$text[1])
+
+print(builtins$type(test))
+print(typeof(test))
+
+class_pred = py$NewPredict(my_vec_tfidf = my_vec_tfidf, pca = pca, clf_pca = clf_pca, data = test)
 ```
 
