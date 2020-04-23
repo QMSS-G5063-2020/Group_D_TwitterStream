@@ -11,6 +11,9 @@ library(reticulate)
 library(rtweet)
 library(ggplot2)
 library(dplyr)
+library(quanteda)
+library(tidytext)
+library(tm)
 
 #points to where python is on your local
 use_python("C:/Users/swagj/AppData/Local/Continuum/anaconda3/python.exe")
@@ -47,8 +50,7 @@ py$os$chdir("C:\\Users\\swagj\\Documents\\GitHub\\TwitterNetworkStreaming\\Lemon
   #access_secret = asecret)
 ```
 
-```{r}
-#Lemon: I'm worried that adding ML to this is going to slow it down a lot
+```{r using python ML}
 my_vec_tfidf = py_load_object("tfidf.pkl")
 pca = py_load_object("pca.pkl")
 clf_pca = py_load_object("clf_pca.pkl")
@@ -115,3 +117,56 @@ for (tweet in temp_rt$text){
   print(ggplot(class_df, aes(x = class)) + geom_bar())
 ```
 
+```{r}
+nrc <- get_sentiments("nrc")
+
+countClass <- function(x){
+  x <- removePunctuation(x)
+  x <- gsub("[^A-Za-z0-9]+", " ", x)
+  x <- tolower(x)
+  x <- removeWords(x, stopwords("en"))
+  x <- trimws(x)
+  x <- stripWhitespace(x)
+  try(
+    #temp_sent <- table(nrc[nrc$word %in% as.list(unlist(strsplit(x, "\\s+")[[1]])), "sentiment"], decreasing = T)
+    temp_sent <- names(table(nrc[nrc$word %in% as.character(quanteda::tokens(x)), "sentiment" ]))[1]
+    )
+  return(temp_sent)
+}
+#try(df$sentnrc[i] <- names(table(gs[gs$word %in% as.character(quanteda::tokens(df$blurb2[i])), "sentiment" ]))[1])
+```
+
+```{r using R count classifier}
+query <- "COVID"
+streamtime <- 2 #number of seconds for each sampling from twitter
+filename <- "teststream.json"
+
+timer <- 1 #initialize timer
+rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename) #initialize dataframe
+rt <- rt[rt$lang == "en",] #remove non-english text
+class_list = c()
+
+repeat { #start repeat statement
+  temp_rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename) #stream new data
+  temp_rt <- temp_rt[temp_rt$lang == "en",] 
+  rt <- rbind(rt, temp_rt) #add new data to dataframe
+  timer <- timer + 1 #add loop to timer
+
+  #print(ggplot(rt, aes(x = source)) + geom_bar()) #example of bar plot, rescales as count increases!
+  #print(ts_plot(rt, by = 'secs', trim = 1)) #example of line plot, rescales as count increases!
+  
+  #myts <- rt %>% group_by(source) %>% ts_plot(., by = "secs", trim = 1) + ggplot2::labs(title = "Tweets over time") 
+  #print(myts) #more complex version of the line plot example
+  for (tweet in temp_rt$text){
+      #test = py$clean_up_sw(tweet)
+      class_list = c(class_list, countClass(tweet))
+  }
+  
+  class_df <- data.frame("class" = matrix(unlist(class_list), nrow=length(class_list), byrow=T))
+  print(ggplot(class_df, aes(x = class)) + geom_bar())
+  
+  if (timer == 5){ #break statement, stream ends after 5 loops
+    break
+  }
+}
+```
