@@ -13,10 +13,11 @@ fluidPage(
   titlePanel("Sentiment analysis of hashtags"),
   sidebarLayout(
     sidebarPanel(
-      textInput(inputId = "hastag",
-                label = "Hastag you would like to analyze:",
-                value = "#"),
-      dateRangeInput("daterange", "Choice the date",
+      textInput(inputId = "hashtag",
+                label = "Hashtag you would like to analyze:",
+                value = ""),
+      actionButton("update", "Change"),
+      dateRangeInput("daterange", "Choose the date",
                      start = min(timeframe$Date),
                      end = max(timeframe$Date),
                      min = min(timeframe$Date),
