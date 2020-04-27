@@ -19,6 +19,10 @@ https://pythonprogramming.net/sentiment-analysis-python-textblob-vader/
 
 https://www.tidytextmining.com/sentiment.html#comparing-the-three-sentiment-dictionaries
 
+https://rviews.rstudio.com/2017/11/15/shiny-and-scheduled-data-r/
+
+https://www.delreyanalytics.com/post/an-simple-r-shiny-dashboard-for-real-time-streaming-data
+
 
 ### Gabriel
 https://medium.com/@kelly.obriant/basic-builds-how-to-update-data-in-a-shiny-app-on-rstudio-connect-48593902b1e2 
