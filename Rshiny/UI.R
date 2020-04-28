@@ -16,17 +16,18 @@ fluidPage(
       textInput(inputId = "hashtag",
                 label = "Hashtag you would like to analyze:",
                 value = ""),
-      submitButton("update"),
-      dateRangeInput("daterange", "Choose the date",
-                     start = min(timeframe$Date),
-                     end = max(timeframe$Date),
-                     min = min(timeframe$Date),
-                     max = max(timeframe$Date),
-                     separator = " - ", format = "dd/mm/yy",
-                     startview = 'Week', language = 'fr', weekstart = 1)),
+      submitButton("update")),
+      #dateRangeInput("daterange", "Choose the date",
+                     #start = min(timeframe$Date),
+                     #end = max(timeframe$Date),
+                     #min = min(timeframe$Date),
+                     #max = max(timeframe$Date),
+                     #separator = " - ", format = "dd/mm/yy",
+                     #startview = 'Week', language = 'fr', weekstart = 1)),
     mainPanel(
       plotOutput("barchart"),
-      plotOutput("linechart")
+      plotOutput("linechart"),
+      dataTableOutput('tbl')
     )
   )
 )
