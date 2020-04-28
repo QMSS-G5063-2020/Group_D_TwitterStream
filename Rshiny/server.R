@@ -52,7 +52,7 @@ streamTweet <- function(query){
       for (t in 1:nrow(temp_rt)){
          class_list <- c(class_list, countClass(temp_rt$text[t]))
          if (!is.null(countClass(temp_rt$text[t]))){
-            time_list = c(time_list, as.POSIXlt(temp_rt$created_at[t]))
+            time_list = c(time_list, as.POSIXct(temp_rt$created_at[t]))
             #lat_list = c(lat_list, temp_rt$lat[t])
             #lon_list = c(lon_list, temp_rt$lng[t])
             raw_text = c(raw_text, temp_rt$text[t])
@@ -109,7 +109,7 @@ shinyServer(function(input,output){
       data() %>%
          group_by(time, class) %>%
          tally() %>%
-         ggplot(data = ., aes(x = time, y = n, color = class)) + 
+         ggplot(data = ., aes(x = as.Date(time, origin = "1970-01-01"), y = n, color = class)) + 
          geom_line(size = 5, alpha = 0.5) +
          labs(title=input$hashtag, y ="Number of tweets", x= "Time") +
          scale_color_brewer(palette = "Spectral", guide = "legend") +
@@ -117,7 +117,7 @@ shinyServer(function(input,output){
          theme(plot.title = element_text(hjust = 0.5))
    })
    
-   output$tbl <- renderDataTable(data()$text)
+   output$tbl <- renderDataTable(data()$tweet)
 })
 
 #all of ceci's ggplot formatting, will add in once it runs
