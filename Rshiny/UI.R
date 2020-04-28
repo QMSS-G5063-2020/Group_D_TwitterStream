@@ -16,7 +16,7 @@ fluidPage(
       textInput(inputId = "hashtag",
                 label = "Hashtag you would like to analyze:",
                 value = ""),
-      actionButton("update", "Change"),
+      submitButton("update"),
       dateRangeInput("daterange", "Choose the date",
                      start = min(timeframe$Date),
                      end = max(timeframe$Date),

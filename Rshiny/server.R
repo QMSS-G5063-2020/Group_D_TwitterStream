@@ -7,7 +7,13 @@ library(quanteda)
 library(stringi)
 library(jsonlite)
 
+
+
 nrc <- get_sentiments("nrc")
+
+#rt <- stream_tweets(timeout = 1)
+#rt <- rt[FALSE, ] #empty df with correct cols and coltypes 4 stream
+class_df <- data.frame("class" = character()) #empty df 4 output
 
 countClass <- function(x){
    x <- removePunctuation(x)
@@ -17,17 +23,16 @@ countClass <- function(x){
    x <- trimws(x)
    x <- stripWhitespace(x)
    try(
-      #temp_sent <- table(nrc[nrc$word %in% as.list(unlist(strsplit(x, "\\s+")[[1]])), "sentiment"], decreasing = T)
       temp_sent <- names(table(nrc[nrc$word %in% as.character(quanteda::tokens(x)), "sentiment" ]))[1]
    )
    return(temp_sent)
 }
 
 streamTweet <- function(query){
-   filename <- "teststream.json"
-   streamtime <- 2 #number of seconds for each sampling from twitter
+   #filename <- "teststream.json"
+   streamtime <- 1 #number of seconds for each sampling from twitter
    timer <- 1 #initialize timer
-   rt <- stream_tweets(q = query, timeout = streamtime, file_name = filename) #initialize dataframe
+   rt <- stream_tweets(q = query, timeout = streamtime) #initialize dataframe
    rt <- rt[rt$lang == "en",] #remove non-english text
    class_list = c()
    
@@ -42,46 +47,30 @@ streamTweet <- function(query){
       }
       
       # the final dataframe as is just includes classification, needs time of tweet and lat/lon
-      class_df <- data.frame("class" = matrix(unlist(class_list), nrow=length(class_list), byrow=T))
+      class_df <<- rbind(class_df, matrix(unlist(class_list))) #data.frame("class" = matrix(unlist(class_list), nrow=length(class_list), byrow=T))
       #class_df <- reactiveValues(class = class_list)
+      #class_df
+      write.table(x = class_df,file = paste("~/stream",Sys.Date(),".csv",sep = ''), row.names = FALSE, col.names = FALSE)
       
       if (timer == 5){ #break statement, stream ends after 5 loops
          break
       }
-   return(class_df) #only returns after repeat statement breaks which kinda ruins the point of the loop
-      #really wish there was a yield statement/generators in R!!!! ugh
    }
 }
 
+#streamTweet("covid")
+
 shinyServer(function(input,output){
-   terms <- reactive({.
-      input$update # tried to make it so the stream doesn't freak out while typing the input
-      isolate({
-         streamTweet(input$hastag)
-      })
-   })
+   
+   test <- reactive(streamTweet(input$hashtag))
+   
+   #data <- reactiveFileReader(intervalMillis = 1000, session = NULL, filePath = paste("~/stream_", query ,".csv",sep = ''), readFunc = read.csv, header = F)
+   data <- reactiveFileReader(intervalMillis = 1000, session = NULL, filePath = paste("~/stream",Sys.Date(),".csv",sep = ''), readFunc = read.csv, header = F)
 
    output$barchart <-renderPlot({
-      if (!stringi::stri_isempty(input$hastag)){ #checks if there's anything in the text field
-         v <- terms()
-         ggplot(data = v, aes(x = class)) + geom_bar()
-         
-         #below is still broken but the plan is that this will check for changes in the json
-         #its 5 am so this code is all bad lol
-         
-         #data <- reactivePoll(intervalMillis = 1000, session = NULL, 
-                      #checkFunc = function(){
-                         #if (file.exists("teststream.json"))
-                            #file.info("teststream.json")$mtime[1]
-                         #else
-                            #""
-                      #}, 
-                      #valueFunc = function() {
-                         #jsonlite::read_json("teststream.json")
-                      #})
-         #data2 <- data()
-         #ggplot(data2, aes(x = "class")) + geom_bar()
-      #}
+      if (!stringi::stri_isempty(input$hashtag)){ #checks if there's anything in the text field
+            ggplot(data = data(), aes(x = data()$V1)) + geom_bar()
+      }
    })
 })
 
