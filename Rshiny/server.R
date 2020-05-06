@@ -8,6 +8,7 @@ library(stringi)
 library(jsonlite)
 library(dplyr)
 library(RColorBrewer)
+library(sys)
 
 file.create(paste("~/stream",Sys.Date(),".csv",sep = '')) #initializes an empty file in wd
 nrc <- get_sentiments("nrc")
@@ -109,9 +110,9 @@ shinyServer(function(input,output){
     data() %>%
       group_by(time, class) %>%
       tally() %>%
-      ggplot(data = ., aes(x = as.Date(time, origin = "1970-01-01"), y = n, color = class)) + 
+      ggplot(data = ., aes(x = seq(1:length(data()$class)), y = n, color = class)) + 
       geom_line(size = 5, alpha = 0.5) +
-      labs(title=input$hashtag, y ="Number of tweets", x= "Time") +
+      labs(title=input$hashtag, y ="Number of tweets", x= "Seconds") +
       scale_color_brewer(palette = "Spectral", guide = "legend") +
       theme_classic() +
       theme(plot.title = element_text(hjust = 0.5))
