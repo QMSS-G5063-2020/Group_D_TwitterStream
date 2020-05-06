@@ -30,6 +30,7 @@ fluidPage(
     mainPanel(
       plotOutput("barchart"),
       plotOutput("linechart"),
+      leafletOutput("mymap"),
       dataTableOutput('tbl')
     )
   )
