@@ -1,6 +1,6 @@
 ## UI- users interface
 library(shiny)
-
+library(leaflet)
 # Create a timeframe wish our model will cover
 timeframe <- data.frame(
   Date = seq(as.Date("2015/1/1"), as.Date("2015/12/31"), "days"))
