@@ -1,0 +1,12 @@
+name: rshiny
+title:
+username:
+account: tweetviz
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2254647
+bundleId: 3112669
+url: https://tweetviz.shinyapps.io/rshiny/
+when: 1588798071.40655
+asMultiple: FALSE
+asStatic: FALSE
