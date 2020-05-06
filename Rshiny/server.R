@@ -110,9 +110,9 @@ shinyServer(function(input,output){
     data() %>%
       group_by(time, class) %>%
       tally() %>%
-      ggplot(data = ., aes(x = seq(1:length(data()$class)), y = n, color = class)) + 
+      ggplot(data = ., aes(x = as.Date(time, origin = Sys.time()), y = n, color = class)) + 
       geom_line(size = 5, alpha = 0.5) +
-      labs(title=input$hashtag, y ="Number of tweets", x= "Seconds") +
+      labs(title=input$hashtag, y ="Number of tweets", x= "Time") +
       scale_color_brewer(palette = "Spectral", guide = "legend") +
       theme_classic() +
       theme(plot.title = element_text(hjust = 0.5))
