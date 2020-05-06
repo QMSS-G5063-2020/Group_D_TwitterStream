@@ -30,9 +30,9 @@ countClass <- function(x){
    return(temp_sent)
 }
 
-streamTweet <- function(query){
+streamTweet <- function(query, timer){
    #filename <- "teststream.json"
-   streamtime <- 1 #number of seconds for each sampling from twitter
+   streamtime <- floor(as.integer(timer)/5) #number of seconds for each sampling from twitter
    timer <- 1 #initialize timer
    rt <- stream_tweets(q = query, timeout = streamtime) #initialize dataframe
    rt <- rt[rt$lang == "en",] #remove non-english text
@@ -85,7 +85,7 @@ shinyServer(function(input,output){
    
    #myStreamer <- reactive({streamTweet(input$hashtag)})
    
-   myEvent <- eventReactive(input$hashtag, {streamTweet(input$hashtag)})
+   myEvent <- eventReactive(input$hashtag, {streamTweet(input$hashtag, input$timer)})
    
    data <- reactiveFileReader(intervalMillis = 1000, session = NULL, filePath = paste("~/stream",Sys.Date(),".csv",sep = ''), readFunc = read.csv, header = T)
    
