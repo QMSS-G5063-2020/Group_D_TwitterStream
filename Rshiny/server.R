@@ -98,10 +98,11 @@ shinyServer(function(input,output){
         #group_by(V1) %>%
         #tally() %>%
         ggplot(data = ., aes(x = class)) + #, y = n)) +
-        geom_bar(colour="#56B4E9",fill="#56B4E9") +
+        geom_bar(colour="#02818a",fill="#02818a") +
+        #scale_y_discrete(breaks=seq(0, 100, by=10)) +
         #stat_summary(fun = mean, geom = "bar",colour="#56B4E9",fill="#56B4E9") +
         #geom_bar(stat="identity") +
-        labs(title=input$hashtag, y ="Number of tweets", x= "Sentiment") +
+        labs(title="Sentiment composition of tweets", y ="Number of tweets", x= "Sentiment") +
         theme_classic() +
         theme(plot.title = element_text(hjust = 0.5))
     }
@@ -112,8 +113,8 @@ shinyServer(function(input,output){
       group_by(time, class) %>%
       tally() %>%
       ggplot(data = ., aes(x = as.Date(time, origin = Sys.time()), y = n, color = class)) + 
-      geom_line(size = 5, alpha = 0.5) +
-      labs(title=input$hashtag, y ="Number of tweets", x= "Time") +
+      geom_line(size = 3, alpha = 0.5) +
+      labs(title="Change of sentiments through time", y ="Number of tweets", x= "Time", color="Sentiment") +
       scale_color_brewer(palette = "Spectral", guide = "legend") +
       theme_classic() +
       theme(plot.title = element_text(hjust = 0.5))
@@ -130,21 +131,3 @@ shinyServer(function(input,output){
   output$tbl <- renderDataTable(data()$tweet)
 })
 
-#all of ceci's ggplot formatting, will add in once it runs
-
-#output$barplot <-renderPlot({
-#ggplot(data=dateRangeInput(), aes_string(x="Sentiment",y=database$count))  +
-#stat_summary(fun.y = mean, geom = "bar",colour="#56B4E9",fill="#56B4E9") +
-#geom_bar(stat="identity") +
-#labs(title=input$hashtag, y ="Average sentiment score", x= "Seentiment") +
-#theme_classic() +
-#theme(plot.title = element_text(hjust = 0.5)) })
-
-#output$barplot <-renderPlot({
-#})
-#})
-
-# output$barchart <-renderPlot({
-#cuantos <-aggregate(database[, input$hastag] ~ Month, database, mean)
-#barplot(cuantos[-2])
-#
