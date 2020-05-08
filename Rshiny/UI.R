@@ -1,15 +1,17 @@
 ## UI- users interface
 library(shiny)
 library(leaflet)
+library(shinythemes)
+
 # Create a timeframe wish our model will cover
-timeframe <- data.frame(
-  Date = seq(as.Date("2015/1/1"), as.Date("2015/12/31"), "days"))
+# timeframe <- data.frame(
+#   Date = seq(as.Date("2015/1/1"), as.Date("2015/12/31"), "days"))
 
 ## To change format of our date
 # timeframe <- timeframe %>% mutate(
 #  Week = format(Date, "%Y-%m-%U"))
-
-fluidPage(
+ui = fluidPage(
+  theme = shinytheme("flatly"),
   titlePanel("Sentiment analysis of hashtags"),
   sidebarLayout(
     sidebarPanel(
