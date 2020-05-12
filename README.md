@@ -6,7 +6,7 @@ A website/user-interface for generating real-time streaming insights from twitte
 
 
 # Repo's documents:
-*The 
+**The 
 
 # Useful links
 (So we can share info/resources to each other if we find anything useful)
