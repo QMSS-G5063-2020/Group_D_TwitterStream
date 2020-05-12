@@ -7,8 +7,9 @@ A website/user-interface for generating real-time streaming insights from twitte
 
 # Repo's documents:
 * Proposal: contains the proposal of the project previously submitted.
-* Final_project (folder): contains the code for the Shiny app, presentation and process book
-*
+* Final_project (folder): contains the code for the Shiny app, presentation and process book.
+* Progress_files (folder): contains all the other notebooks and files used during the development process. 
+
 
 # Useful links
 (So we can share info/resources to each other if we find anything useful)
