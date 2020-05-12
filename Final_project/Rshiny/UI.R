@@ -3,37 +3,55 @@ library(shiny)
 library(leaflet)
 library(shinythemes)
 
-# Create a timeframe wish our model will cover
-# timeframe <- data.frame(
-#   Date = seq(as.Date("2015/1/1"), as.Date("2015/12/31"), "days"))
 
-## To change format of our date
-# timeframe <- timeframe %>% mutate(
-#  Week = format(Date, "%Y-%m-%U"))
 ui = fluidPage(
   theme = shinytheme("flatly"),
-  titlePanel("Sentiment analysis of hashtags"),
-  sidebarLayout(
-    sidebarPanel(
-      textInput(inputId = "hashtag",
+  #fluidRow(column(5, offset = 4, 
+                  titlePanel(h1(strong("Hashtags sentiment  analysis"), align= "center")),
+#)(), 
+                br(),
+  fluidRow(
+  h4("  Gabriel Gillings, Lemon Reimer and Cecilia Cabello",
+  br(),
+  h5("  Provide a hashtag and the time you wish for the app to
+     'listen' for tweets containing the hashtag. The text of each tweet is then 
+      processed and put through NRC dictionaries for a sentiment analysis.
+                                                     "))),
+  br(),
+      sidebarPanel(
+        fluidRow(textInput(inputId = "hashtag",
                 label = "Hashtag you would like to analyze:",
-                value = ""),
-      submitButton("update"),
-      textInput(inputId = "timer",
+                value = "")),
+        fluidRow(textInput(inputId = "timer",
                 label = "Time in seconds to stream",
                 value = "5")),
-      #dateRangeInput("daterange", "Choose the date",
-                     #start = min(timeframe$Date),
-                     #end = max(timeframe$Date),
-                     #min = min(timeframe$Date),
-                     #max = max(timeframe$Date),
-                     #separator = " - ", format = "dd/mm/yy",
-                     #startview = 'Week', language = 'fr', weekstart = 1)),
+        fluidRow(submitButton("update")),
+        style = "padding: 40px;"),
+  br(),
     mainPanel(
-      plotOutput("barchart"),
-      plotOutput("linechart"),
-      leafletOutput("mymap"),
-      dataTableOutput('tbl')
+      tabsetPanel(
+        tabPanel(title="Overall sentiment", 
+                 br(),
+                 h4(strong("Sentiment composition of tweets")), 
+                 p("A bar graph which displays what is the overall distribution and count of tweets given its coincidence with NRC dictionaries."),
+                 br(),
+                 plotOutput("barchart")),
+        tabPanel(title="Timeline", 
+                 br(),
+                 h4(strong("Change of sentiments through time")), 
+                 p("Line graph showing the evolution of sentiment through time."), 
+                 br(),
+                 plotOutput("linechart")),
+        tabPanel(title="Location", 
+                 br(),
+                 h4(strong("Location of tweets")), 
+                 br(),
+                 leafletOutput("mymap"),
+                 p("*This map depends on the check-ins made when publishing a tweet. Also, since tweets are limited to those written in english it
+                    focuses on certain countries."),
+                 #dataTableOutput('tbl')
+                 )
+       )
     )
   )
-)
+

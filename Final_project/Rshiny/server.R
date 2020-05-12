@@ -11,15 +11,19 @@ library(dplyr)
 library(RColorBrewer)
 library(sys)
 
-file.create(paste("~/stream",Sys.Date(),".csv",sep = '')) #initializes an empty file in wd
+file.create(paste("~/stream",Sys.Date(),".csv",sep = '')) # Initializes an empty file in wd
+
 nrc <- get_sentiments("nrc")
 class_df <- data.frame("class" = character(),
                        "time" = character(),
                        "lat" = character(),
                        "lon" = character(),
-                       "tweet" = character()) #empty df 4 output
+                       "tweet" = character()) # Empty df 4 output
+
 
 countClass <- function(x){
+  # Function to remove punctuation, clean text, lower text, remove stopwords, trim and strip white space and
+  # find coincidence with nrc dictionaries.
   x <- removePunctuation(x)
   x <- gsub("[^A-Za-z0-9]+", " ", x)
   x <- tolower(x)
@@ -33,23 +37,24 @@ countClass <- function(x){
 }
 
 streamTweet <- function(query, timer){
-  #filename <- "teststream.json"
-  streamtime <- floor(as.integer(timer)/5) #number of seconds for each sampling from twitter
-  timer <- 1 #initialize timer
-  rt <- stream_tweets(q = query, timeout = streamtime) #initialize dataframe
-  rt <- rt[rt$lang == "en",] #remove non-english text
+  # Funtion to call on tweets based on query and number of seconds given
+  # filename <- "teststream.json"
+  streamtime <- floor(as.integer(timer)/5) # Number of seconds for each sampling from twitter
+  timer <- 1 # Initialize timer
+  rt <- stream_tweets(q = query, timeout = streamtime) # Initialize dataframe
+  rt <- rt[rt$lang == "en",] # Remove non-english text
   class_list = c()
   time_list = c()
   lat_list = c()
   lon_list = c()
   raw_text = c()
   
-  repeat { #start repeat statement
+  repeat { # Start repeat statement
     temp_rt <- stream_tweets(q = query, timeout = streamtime) #stream new data
     temp_rt <- temp_rt[temp_rt$lang == "en",] 
-    rt <- rbind(rt, temp_rt) #add new data to dataframe
-    timer <- timer + 1 #add loop to timer
-    #temp_rt <- lat_lng(temp_rt)
+    rt <- rbind(rt, temp_rt) # Add new data to dataframe
+    timer <- timer + 1 # Add loop to timer
+    # temp_rt <- lat_lng(temp_rt)
     
     for (t in 1:nrow(temp_rt)){
       class_list <- c(class_list, countClass(temp_rt$text[t]))
@@ -61,48 +66,46 @@ streamTweet <- function(query, timer){
       }
     }
     
-    #time_list = c(as.POSIXct(temp_rt$created_at[temp_rt$text %in% raw_text, ]))
+    # time_list = c(as.POSIXct(temp_rt$created_at[temp_rt$text %in% raw_text, ]))
     
-    # the final dataframe as is just includes classification, needs time of tweet and lat/lon
+    # The final dataframe as is just includes classification, needs time of tweet and lat/lon
     temp_class_df <- data.frame("class" = matrix(unlist(class_list), nrow = length(class_list), byrow = T),
                                 "time"  = matrix(unlist(time_list), nrow = length(class_list), byrow = T),
                                 "lat" = matrix(unlist(lat_list), nrow = length(class_list), byrow = T),
                                 "lon" = matrix(unlist(lon_list), nrow = length(class_list), byrow = T),
                                 "tweet" = matrix(unlist(raw_text), nrow = length(class_list), byrow = T))
     
-    class_df <<- rbind(class_df, temp_class_df) #data.frame("class" = matrix(unlist(class_list), nrow=length(class_list), byrow=T))
-    #class_df <- reactiveValues(class = class_list)
-    #class_df
+    class_df <<- rbind(class_df, temp_class_df) 
+    # data.frame("class" = matrix(unlist(class_list), nrow=length(class_list), byrow=T))
+    # class_df <- reactiveValues(class = class_list)
+    # class_df
     write.csv(x = class_df,file = paste("~/stream",Sys.Date(),".csv",sep = ''), row.names = FALSE)
     
-    if (timer == 5){ #break statement, stream ends after 5 loops
+    if (timer == 5){ # Break statement, stream ends after 5 loops
       break
     }
   }
 }
 
-#streamTweet("covid")
+# streamTweet("covid") #for tests
 
 shinyServer(function(input,output){
   
-  #myStreamer <- reactive({streamTweet(input$hashtag)})
+  # myStreamer <- reactive({streamTweet(input$hashtag)})
   
   myEvent <- eventReactive(input$hashtag, {streamTweet(input$hashtag, input$timer)})
   
   data <- reactiveFileReader(intervalMillis = 1000, session = NULL, filePath = paste("~/stream",Sys.Date(),".csv",sep = ''), readFunc = read.csv, header = T)
   
   output$barchart <-renderPlot({
-    if (!stringi::stri_isempty(input$hashtag)){ #checks if there's anything in the text field
+    if (!stringi::stri_isempty(input$hashtag)){ # Checks if there's anything in the text field.
       myEvent()
       data() %>%
-        #group_by(V1) %>%
-        #tally() %>%
         ggplot(data = ., aes(x = class)) + #, y = n)) +
-        geom_bar(colour="#02818a",fill="#02818a") +
-        #scale_y_discrete(breaks=seq(0, 100, by=10)) +
-        #stat_summary(fun = mean, geom = "bar",colour="#56B4E9",fill="#56B4E9") +
-        #geom_bar(stat="identity") +
-        labs(title="Sentiment composition of tweets", y ="Number of tweets", x= "Sentiment") +
+        geom_bar(colour="#1c9099",fill="#1c9099") +
+        labs(
+          #title="Sentiment composition of tweets",
+             y ="Number of tweets", x= "Sentiment") +
         theme_classic() +
         theme(plot.title = element_text(hjust = 0.5))
     }
@@ -114,14 +117,18 @@ shinyServer(function(input,output){
       tally() %>%
       ggplot(data = ., aes(x = as.Date(time, origin = Sys.time()), y = n, color = class)) + 
       geom_line(size = 3, alpha = 0.5) +
-      labs(title="Change of sentiments through time", y ="Number of tweets", x= "Time", color="Sentiment") +
+      labs(
+        #title="Change of sentiments through time", 
+        y ="Number of tweets", x= "Time", color="Sentiment") +
       scale_color_brewer(palette = "Spectral", guide = "legend") +
       theme_classic() +
       theme(plot.title = element_text(hjust = 0.5))
   })
   
   output$mymap <- renderLeaflet({
-    leaflet(data()) %>%
+    leaflet(data(), 
+            options = leafletOptions(Zoom = 40)) %>%
+     #setView(zoom=0) %>%
       addProviderTiles(providers$Stamen.TonerLite,
                        options = providerTileOptions(noWrap = TRUE)
       ) %>%
