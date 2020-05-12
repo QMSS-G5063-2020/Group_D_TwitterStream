@@ -10,6 +10,8 @@ A website/user-interface for generating real-time streaming insights from twitte
 * Final_project (folder): contains the code for the Shiny app, presentation and process book.
 * Progress_files (folder): contains all the other notebooks and files used during the development process. 
 
+# Link: https://cc4517.shinyapps.io/D_streamer/ 
+(Having issues with our twitter streamer)
 
 # Useful links
 (So we can share info/resources to each other if we find anything useful)
